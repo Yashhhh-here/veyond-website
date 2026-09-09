@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Veyond — integrated business services, creative direction and digital experiences.">
+<title>Veyond — Integrated by design.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#05040a; --surface:#0b0913; --surface2:#111020; --paper:#f1eee8;
+  --text:#f6f4fa; --muted:#9b97aa; --faint:#6e6a7c;
+  --line:rgba(208,199,240,.14); --line2:rgba(208,199,240,.24);
+  --accent:#9b88ff; --accent2:#d1c9ff; --accent3:#5544c8;
+  --green:#c8ff66; --max:1440px; --ease:cubic-bezier(.2,.8,.2,1);
+  --radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{background:var(--bg);color:var(--text);font-family:Manrope,Arial,sans-serif;overflow-x:hidden;cursor:none}
+body.menu-open{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font:inherit}
+button{cursor:none}
+::selection{background:var(--accent);color:#05040a}
+::-webkit-scrollbar{width:7px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#29233e;border-radius:10px}
+
+.cursor{position:fixed;z-index:2000;width:9px;height:9px;border-radius:50%;left:0;top:0;pointer-events:none;background:var(--accent2);mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .22s,height .22s,opacity .2s}
+.cursor.big{width:62px;height:62px}
+.cursor-label{position:fixed;z-index:2001;pointer-events:none;opacity:0;font:9px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em;transform:translate(-50%,-50%);transition:opacity .2s}
+.cursor-label.show{opacity:1}
+
+.noise{position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
+.progress{position:fixed;z-index:1900;left:0;top:0;height:2px;width:0;background:linear-gradient(90deg,var(--accent3),var(--accent2),var(--green));box-shadow:0 0 14px rgba(155,136,255,.45)}
+
+.nav{position:fixed;z-index:1500;top:0;left:0;width:100%;height:82px;padding:20px 34px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;transition:background .45s,border .45s,backdrop-filter .45s}
+.nav.scrolled{background:rgba(5,4,10,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;letter-spacing:-.07em}
+.brand-mark{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 22px rgba(155,136,255,.7)}
+.nav-links{display:flex;gap:27px;justify-content:center;font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.07em}
+.nav-links a{position:relative;color:#d4d0df;opacity:.72;padding:8px 0}
+.nav-links a:after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:var(--accent2);transform:scaleX(0);transform-origin:right;transition:transform .35s var(--ease)}
+.nav-links a:hover{opacity:1}.nav-links a:hover:after{transform:scaleX(1);transform-origin:left}
+.nav-right{display:flex;justify-content:flex-end;align-items:center;gap:10px}
+.nav-cta,.pill{border:1px solid var(--line2);border-radius:999px;padding:11px 15px;font:9px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.07em;transition:.35s var(--ease)}
+.nav-cta:hover{background:var(--accent2);color:#07050e;border-color:var(--accent2);transform:translateY(-2px)}
+.menu-toggle{display:none;border:1px solid var(--line2);background:transparent;color:var(--text);border-radius:50%;width:42px;height:42px}
+
+.menu-overlay{position:fixed;z-index:1400;inset:0;background:rgba(5,4,10,.96);backdrop-filter:blur(24px);display:grid;place-items:center;opacity:0;visibility:hidden;transition:.5s var(--ease)}
+.menu-overlay.open{opacity:1;visibility:visible}
+.menu-inner{width:min(1100px,90vw)}
+.menu-index{font:10px "DM Mono",monospace;color:var(--accent2);margin-bottom:35px}
+.menu-links{display:grid}
+.menu-links a{font-size:clamp(48px,9vw,130px);font-weight:800;letter-spacing:-.08em;line-height:.88;padding:7px 0;border-bottom:1px solid var(--line);transform:translateY(30px);opacity:0;transition:.55s var(--ease)}
+.menu-overlay.open .menu-links a{transform:none;opacity:1}
+.menu-overlay.open .menu-links a:nth-child(2){transition-delay:.06s}.menu-overlay.open .menu-links a:nth-child(3){transition-delay:.12s}.menu-overlay.open .menu-links a:nth-child(4){transition-delay:.18s}
+.menu-links a:hover{color:var(--accent2);padding-left:18px}
+
+.hero{min-height:100svh;position:relative;display:flex;align-items:flex-end;padding:150px 34px 45px;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 78% 33%,rgba(87,66,210,.23),transparent 28%),radial-gradient(circle at 25% 80%,rgba(155,136,255,.07),transparent 24%),linear-gradient(180deg,transparent 55%,rgba(0,0,0,.42));pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:76px 76px;mask-image:linear-gradient(to bottom,#000,transparent 78%);opacity:.42}
+.hero-art{position:absolute;width:min(62vw,900px);height:min(62vw,900px);right:-10%;top:-4%;z-index:1;transform:rotate(-7deg);animation:float 13s ease-in-out infinite;filter:drop-shadow(0 35px 100px rgba(72,54,180,.22))}
+.art-plane{position:absolute;inset:10%;border:1px solid rgba(209,201,255,.22);background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(89,69,207,.04));transform:perspective(800px) rotateX(58deg) rotateZ(18deg);mask-image:radial-gradient(circle,#000 25%,transparent 72%)}
+.art-plane:before,.art-plane:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(209,201,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(209,201,255,.055) 1px,transparent 1px);background-size:34px 34px}
+.art-ring{position:absolute;border:1px solid rgba(220,214,255,.46);border-radius:50%;left:16%;top:16%;width:68%;height:68%;transform:rotate(65deg) skewX(-9deg);box-shadow:0 0 90px rgba(119,94,255,.12),inset 0 0 40px rgba(255,255,255,.035);animation:spin 20s linear infinite}
+.art-ring.r2{left:28%;top:7%;width:59%;height:59%;border-color:rgba(155,136,255,.26);transform:rotate(-35deg) skewX(16deg);animation-duration:15s;animation-direction:reverse}
+.art-ring.r3{left:6%;top:30%;width:84%;height:40%;border-color:rgba(209,201,255,.16);transform:rotate(22deg);animation-duration:28s}
+.art-core{position:absolute;left:35%;top:35%;width:31%;aspect-ratio:1;border:1px solid rgba(255,255,255,.6);border-radius:26%;background:linear-gradient(145deg,rgba(209,201,255,.22),rgba(40,31,100,.48));backdrop-filter:blur(9px);display:grid;place-items:center;transform:rotate(45deg);animation:pulse 5.5s ease-in-out infinite;box-shadow:inset 0 0 55px rgba(255,255,255,.08),0 0 110px rgba(99,77,255,.2)}
+.art-core span{transform:rotate(-45deg);font-size:clamp(60px,8vw,135px);font-weight:800;letter-spacing:-.13em}
+.beam{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--accent2),transparent);filter:drop-shadow(0 0 8px var(--accent));opacity:.75}
+.b1{width:100%;top:50%;transform:rotate(27deg)}.b2{width:82%;top:43%;left:9%;transform:rotate(-47deg);opacity:.45}
+.particle{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--accent2);box-shadow:0 0 18px var(--accent);animation:particle 4s ease-in-out infinite}
+.p1{left:15%;top:65%}.p2{left:79%;top:27%;animation-delay:.8s}.p3{left:67%;top:79%;animation-delay:1.4s}.p4{left:28%;top:20%;animation-delay:2s}
+.hero-inner{position:relative;z-index:5;width:100%;max-width:var(--max);margin:auto}
+.eyebrow{display:flex;align-items:center;gap:12px;color:var(--muted);font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.09em;margin-bottom:28px}
+.eyebrow i{display:block;width:34px;height:1px;background:var(--accent)}
+.hero h1{font-size:clamp(70px,11.5vw,178px);font-weight:800;line-height:.79;letter-spacing:-.09em;max-width:1170px}
+.hero h1 .serif{font-family:"Playfair Display",Georgia,serif;font-weight:500;font-style:italic;letter-spacing:-.065em}
+.hero h1 .accent{color:var(--accent2);text-shadow:0 0 55px rgba(155,136,255,.22)}
+.hero-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-top:52px}
+.hero-copy{max-width:480px;color:#b3afbe;font-size:15px;line-height:1.75}
+.hero-meta{display:flex;gap:12px;align-items:flex-end}
+.hero-meta .meta-box{border-left:1px solid var(--line2);padding-left:14px;font:9px "DM Mono",monospace;color:var(--muted);text-transform:uppercase;line-height:1.65}
+.scroll-line{writing-mode:vertical-rl;font:9px "DM Mono",monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:17px 0;background:#06050b}
+.track{display:flex;width:max-content;animation:marquee 28s linear infinite}
+.track span{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:0 28px;color:#d7d3e2}.track b{color:var(--accent2);font-weight:500}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+section{padding:145px 34px;position:relative}
+.wrap{max-width:var(--max);margin:auto}
+.section-top{display:grid;grid-template-columns:180px 1fr;gap:45px;margin-bottom:65px}
+.section-label{font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2)}
+.section-label:before{content:"";display:inline-block;width:25px;height:1px;background:var(--accent);vertical-align:middle;margin-right:10px}
+.section-intro{max-width:760px;font-size:clamp(34px,5vw,74px);line-height:.96;letter-spacing:-.065em}
+.section-intro em{font-family:"Playfair Display",Georgia,serif;font-weight:500}
+
+.manifesto{display:grid;grid-template-columns:1.2fr .8fr;gap:100px;align-items:end}
+.manifesto-title{font-size:clamp(48px,7vw,105px);line-height:.88;letter-spacing:-.075em}
+.manifesto-title em{font-family:"Playfair Display",Georgia,serif;font-weight:500}
+.manifesto-copy{max-width:450px;color:#a7a3b2;font-size:15px;line-height:1.9}
+.manifesto-copy strong{color:#f3f0fb}
+.link-arrow{display:inline-flex;align-items:center;gap:11px;margin-top:25px;font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid rgba(209,201,255,.35);padding-bottom:8px}
+.link-arrow span{color:var(--accent2);transition:.35s}.link-arrow:hover span{transform:translate(5px,-5px)}
+
+.bento{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:minmax(190px,auto);gap:14px}
+.bento-card{position:relative;overflow:hidden;border:1px solid var(--line);background:linear-gradient(145deg,#0d0b17,#08070e);padding:28px;border-radius:var(--radius);transition:.55s var(--ease)}
+.bento-card:hover{transform:translateY(-5px);border-color:var(--line2);box-shadow:0 30px 80px rgba(0,0,0,.28)}
+.bento-card:nth-child(1){grid-column:span 7;grid-row:span 2}.bento-card:nth-child(2){grid-column:span 5}.bento-card:nth-child(3){grid-column:span 5}.bento-card:nth-child(4){grid-column:span 4}.bento-card:nth-child(5){grid-column:span 4}.bento-card:nth-child(6){grid-column:span 4}
+.card-index{font:9px "DM Mono",monospace;color:var(--accent2);text-transform:uppercase}.bento-card h3{font-size:clamp(25px,3vw,45px);line-height:.94;letter-spacing:-.055em;margin-top:45px;max-width:420px}.bento-card p{color:#8f8b9b;font-size:12px;line-height:1.7;max-width:440px;margin-top:16px}
+.card-orbit{position:absolute;width:260px;height:260px;right:-45px;bottom:-75px;border:1px solid rgba(209,201,255,.22);border-radius:50%;box-shadow:0 0 70px rgba(99,77,255,.12)}.card-orbit:before,.card-orbit:after{content:"";position:absolute;inset:30px;border:1px solid rgba(155,136,255,.22);border-radius:50%}.card-orbit:after{inset:65px;border-color:rgba(200,255,102,.18)}
+.bento-card .number{position:absolute;right:25px;top:22px;font:9px "DM Mono",monospace;color:#625d70}
+.bento-card .mini-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:25px}.mini-list span{padding:8px 10px;border:1px solid var(--line);border-radius:999px;font:9px "DM Mono",monospace;color:#aaa6b6}
+.bento-art{position:absolute;right:20px;bottom:20px;width:120px;height:120px;border:1px solid var(--line2);transform:rotate(45deg);border-radius:20px;background:linear-gradient(145deg,rgba(155,136,255,.18),transparent)}
+.bento-art:after{content:"";position:absolute;inset:20px;border:1px dashed rgba(209,201,255,.32);border-radius:50%}
+
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.filter{border:1px solid var(--line);background:transparent;color:#aaa5b5;padding:10px 13px;border-radius:999px;font:9px "DM Mono",monospace;text-transform:uppercase;transition:.3s}
+.filter:hover,.filter.active{background:var(--accent2);border-color:var(--accent2);color:#08070e}
+.service-list{border-top:1px solid var(--line)}
+.service{display:grid;grid-template-columns:70px 1fr 1.1fr 55px;gap:20px;align-items:center;border-bottom:1px solid var(--line);padding:29px 0;transition:.45s var(--ease);cursor:pointer}
+.service:hover{padding-left:20px;padding-right:20px;background:radial-gradient(circle at 80% 50%,rgba(120,101,255,.1),transparent 28%),#0d0b16}
+.service.hidden{display:none}
+.service-no{font:10px "DM Mono",monospace;color:var(--faint)}
+.service-name{font-size:clamp(24px,3vw,43px);letter-spacing:-.055em;transition:.35s}
+.service:hover .service-name{transform:translateX(5px);color:#fff}
+.service-desc{font-size:13px;line-height:1.65;color:#8d8999;max-width:500px}
+.service-arrow{font-size:25px;color:#777184;text-align:right;transition:.35s}
+.service:hover .service-arrow{color:var(--accent2);transform:rotate(-45deg)}
+.service-detail{grid-column:2/-1;max-height:0;opacity:0;overflow:hidden;transition:max-height .55s var(--ease),opacity .35s,padding .45s}
+.service.open .service-detail{max-height:180px;opacity:1;padding:3px 55px 10px 0}
+.tags{display:flex;flex-wrap:wrap;gap:7px}.tags span{padding:7px 9px;border:1px solid var(--line);border-radius:999px;font:9px "DM Mono",monospace;color:#a9a4b5}
+
+.plans-section{background:linear-gradient(180deg,transparent,rgba(85,68,200,.06),transparent)}
+.plan-intro{display:grid;grid-template-columns:1fr .7fr;gap:80px;align-items:end}
+.plan-intro h2{font-size:clamp(50px,7vw,100px);line-height:.84;letter-spacing:-.075em}
+.plan-intro h2 em{font-family:"Playfair Display",Georgia,serif;font-weight:500}
+.plan-intro p{color:#9d98aa;font-size:14px;line-height:1.8;max-width:430px}
+
+.plan-nav{display:flex;gap:8px;overflow:auto;padding:35px 0 18px;scrollbar-width:none}.plan-nav::-webkit-scrollbar{display:none}
+.plan-tab{flex:0 0 auto;border:1px solid var(--line);background:#090812;color:#9d98aa;border-radius:999px;padding:11px 15px;font:9px "DM Mono",monospace;text-transform:uppercase;transition:.3s}.plan-tab.active,.plan-tab:hover{background:var(--accent2);color:#08070e;border-color:var(--accent2)}
+.plan-panel{display:none}.plan-panel.active{display:block;animation:panelIn .6s var(--ease)}
+.plan-header{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:stretch;margin-top:5px}
+.plan-hero{min-height:390px;border:1px solid var(--line);border-radius:28px;background:radial-gradient(circle at 70% 25%,rgba(155,136,255,.2),transparent 27%),linear-gradient(145deg,#121020,#08070e);padding:35px;position:relative;overflow:hidden}
+.plan-hero .eyebrow{margin-bottom:50px}.plan-hero h3{font-size:clamp(44px,6vw,85px);line-height:.85;letter-spacing:-.075em}.plan-hero h3 span{color:var(--accent2)}.plan-price{margin-top:30px;font-size:24px;font-weight:700;letter-spacing:-.04em}.plan-price small{font:9px "DM Mono",monospace;color:#777185;margin-left:6px}.plan-caption{position:absolute;right:28px;bottom:27px;font:9px "DM Mono",monospace;color:#706a7c;text-transform:uppercase}
+.plan-map{border:1px solid var(--line);border-radius:28px;background:#08070e;position:relative;overflow:hidden;min-height:390px;padding:24px}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(209,201,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(209,201,255,.045) 1px,transparent 1px);background-size:30px 30px}
+.node{position:absolute;border:1px solid rgba(209,201,255,.32);background:rgba(16,14,29,.84);backdrop-filter:blur(8px);padding:10px 12px;border-radius:12px;font:8px "DM Mono",monospace;text-transform:uppercase;color:#bdb8ca;transition:.35s;z-index:2}.node:hover{border-color:var(--accent2);transform:scale(1.06);color:#fff}.node.core{left:39%;top:42%;border-radius:50%;width:88px;height:88px;display:grid;place-items:center;border-color:var(--accent);box-shadow:0 0 45px rgba(155,136,255,.2);text-align:center}.node.n1{left:9%;top:19%}.node.n2{right:9%;top:18%}.node.n3{left:8%;bottom:18%}.node.n4{right:8%;bottom:17%}.connector{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);transform-origin:left;opacity:.55;z-index:1}.c1{width:38%;left:31%;top:42%;transform:rotate(-25deg)}.c2{width:37%;left:47%;top:44%;transform:rotate(-145deg)}.c3{width:39%;left:32%;top:49%;transform:rotate(26deg)}.c4{width:38%;left:48%;top:50%;transform:rotate(151deg)}
+
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.detail-card{border:1px solid var(--line);border-radius:20px;padding:25px;background:linear-gradient(145deg,#0d0b16,#08070d);min-height:245px;transition:.45s var(--ease)}
+.detail-card:hover{transform:translateY(-4px);border-color:var(--line2)}.detail-card .d-no{font:9px "DM Mono",monospace;color:var(--accent2)}.detail-card h4{font-size:23px;letter-spacing:-.05em;margin:45px 0 10px}.detail-card p{font-size:12px;line-height:1.7;color:#8f8a9b}.detail-card ul{list-style:none;display:grid;gap:8px;margin-top:15px}.detail-card li{font-size:11px;color:#aaa5b5;padding-left:15px;position:relative}.detail-card li:before{content:"";position:absolute;width:4px;height:4px;border-radius:50%;background:var(--accent);left:0;top:7px}
+
+.addons-section{padding-top:80px}
+.addons-head{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:28px}.addons-head h2{font-size:clamp(42px,6vw,80px);line-height:.9;letter-spacing:-.07em}.addons-head p{max-width:380px;color:#8f8a9a;font-size:13px;line-height:1.7}
+.addon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.addon-card{border:1px solid var(--line);border-radius:20px;padding:22px;background:#090811;min-height:210px;position:relative;overflow:hidden;transition:.4s var(--ease)}
+.addon-card:hover{transform:translateY(-5px);border-color:rgba(209,201,255,.3);background:#0d0b16}.addon-card .type{font:9px "DM Mono",monospace;color:var(--accent2);text-transform:uppercase}.addon-card h3{font-size:21px;letter-spacing:-.04em;margin-top:30px;max-width:190px}.addon-card .cost{position:absolute;right:20px;bottom:20px;font:10px "DM Mono",monospace;color:#8d8798}.addon-card:after{content:"";position:absolute;width:90px;height:90px;border:1px solid rgba(155,136,255,.13);border-radius:50%;right:-30px;top:-30px}
+
+.horizontal-wrap{overflow:hidden}.horizontal-track{display:flex;gap:12px;width:max-content;transform:translateX(0);transition:transform .08s linear}.story-card{width:min(430px,78vw);height:390px;border:1px solid var(--line);border-radius:25px;padding:28px;background:linear-gradient(145deg,#0e0c18,#07060c);position:relative;overflow:hidden}.story-card:nth-child(2n){margin-top:55px}.story-card .story-num{font:9px "DM Mono",monospace;color:var(--accent2)}.story-card h3{font-size:37px;line-height:.93;letter-spacing:-.06em;margin-top:95px}.story-card p{position:absolute;left:28px;right:28px;bottom:28px;color:#8f8a99;font-size:12px;line-height:1.65}.story-card .stroke{position:absolute;width:180px;height:180px;border:1px solid rgba(209,201,255,.18);border-radius:50%;right:-55px;top:-55px}.story-card .stroke:after{content:"";position:absolute;inset:28px;border:1px dashed rgba(200,255,102,.18);border-radius:50%}
+
+.pricing-explainer{display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:start}
+.pricing-explainer h2{font-size:clamp(48px,6vw,88px);line-height:.87;letter-spacing:-.075em}.pricing-explainer h2 em{font-family:"Playfair Display",Georgia,serif;font-weight:500}
+.pricing-copy{color:#9893a4;font-size:14px;line-height:1.85;max-width:520px}
+.price-rules{display:grid;border-top:1px solid var(--line);margin-top:30px}.rule{display:grid;grid-template-columns:45px 1fr;gap:15px;padding:17px 0;border-bottom:1px solid var(--line)}.rule b{font:9px "DM Mono",monospace;color:var(--accent2)}.rule p{font-size:12px;line-height:1.65;color:#aaa5b5}.rule strong{color:#f0edf7}
+.price-table{margin-top:50px;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:#090811}.price-row{display:grid;grid-template-columns:1.4fr repeat(5,1fr);border-bottom:1px solid var(--line)}.price-row:last-child{border-bottom:0}.price-row>div{padding:15px 13px;border-right:1px solid var(--line);font-size:11px}.price-row>div:last-child{border-right:0}.price-row.head{background:#100d1d}.price-row.head>div{font:8px "DM Mono",monospace;text-transform:uppercase;color:var(--accent2)}.price-row:not(.head)>div:not(:first-child){font-weight:700}.price-row .sector{font-size:11px;color:#d8d3e1}
+
+.pricing-note{margin-top:15px;font:9px "DM Mono",monospace;color:#6e6879;line-height:1.7}
+
+.cta-section{padding:170px 34px;text-align:center;overflow:hidden}.cta-section:before{content:"";position:absolute;inset:15% 20%;background:radial-gradient(circle,rgba(91,73,195,.16),transparent 65%);filter:blur(10px)}
+.cta-kicker{position:relative;font:10px "DM Mono",monospace;text-transform:uppercase;color:var(--muted);margin-bottom:30px}.cta-title{position:relative;font-size:clamp(65px,11vw,165px);line-height:.78;letter-spacing:-.09em}.cta-title em{font-family:"Playfair Display",Georgia,serif;font-weight:500}.cta-title span{color:var(--accent2)}.cta-buttons{position:relative;display:flex;justify-content:center;gap:10px;margin-top:42px}.magnetic{display:inline-flex;align-items:center;gap:13px;padding:16px 21px;border-radius:999px;border:1px solid var(--line2);font:10px "DM Mono",monospace;text-transform:uppercase;transition:transform .2s var(--ease),background .3s,color .3s}.magnetic.primary{background:var(--accent2);color:#08070e;border-color:var(--accent2)}.magnetic:hover{background:var(--accent2);color:#08070e}
+
+.contact{padding:100px 34px 35px;background:radial-gradient(circle at 78% 15%,rgba(88,69,205,.22),transparent 25%),linear-gradient(145deg,#090817,#04030a);border-top:1px solid var(--line)}
+.contact-grid{display:grid;grid-template-columns:1fr .85fr;gap:90px}.contact h2{font-size:clamp(60px,8vw,120px);line-height:.8;letter-spacing:-.085em}.contact h2 em{font-family:"Playfair Display",Georgia,serif;font-weight:500}.contact-side{max-width:420px;color:#8e899a;font-size:13px;line-height:1.8;margin-top:28px}.contact-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px}.contact-tags span{border:1px solid var(--line);padding:7px 9px;border-radius:999px;font:9px "DM Mono",monospace;color:#9691a3}
+.form{display:flex;flex-direction:column}.field{border-bottom:1px solid rgba(209,201,255,.19);padding:15px 0}.field label{display:block;font:8px "DM Mono",monospace;text-transform:uppercase;color:#777183;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:0;outline:0;background:transparent;color:#f5f2fa;font-size:15px}.field textarea{min-height:85px;resize:vertical}.field option{background:#0c0a16}.submit{margin-top:25px;padding:17px 20px;border:1px solid var(--accent2);background:var(--accent2);color:#08070e;border-radius:999px;font:10px "DM Mono",monospace;text-transform:uppercase;transition:.35s}.submit:hover{box-shadow:0 0 45px rgba(155,136,255,.22);transform:translateY(-2px)}
+.contact-foot{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);margin-top:85px;padding-top:20px;font:9px "DM Mono",monospace;text-transform:uppercase;color:#6f6979}
+
+.toast{position:fixed;z-index:2100;right:22px;bottom:22px;background:#f4f1f7;color:#08070e;border-radius:14px;padding:13px 16px;font-size:11px;transform:translateY(130px);opacity:0;transition:.45s}.toast.show{transform:none;opacity:1}
+
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .9s var(--ease),transform .9s var(--ease)}.reveal.show{opacity:1;transform:none}
+.split-word{display:inline-block;overflow:hidden;vertical-align:bottom}.split-word>span{display:inline-block;transform:translateY(105%);transition:transform .8s var(--ease)}.show .split-word>span{transform:none}
+[data-tilt]{transform-style:preserve-3d}
+
+@keyframes float{50%{transform:rotate(-2deg) translate3d(-1%,2%,0) scale(1.025)}}@keyframes spin{to{transform:rotate(425deg) skewX(-9deg)}}@keyframes pulse{50%{transform:rotate(45deg) scale(1.04);box-shadow:inset 0 0 60px rgba(255,255,255,.11),0 0 130px rgba(99,77,255,.28)}}@keyframes particle{50%{transform:translateY(-14px) scale(1.45);opacity:.45}}@keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+@media(max-width:1000px){
+  .nav{grid-template-columns:1fr auto}.nav-links{display:none}.nav-right .nav-cta{display:none}.menu-toggle{display:block}
+  .hero-art{width:90vw;height:90vw;right:-28%;top:10%;opacity:.72}.hero h1{font-size:clamp(65px,13vw,125px)}
+  .section-top{grid-template-columns:1fr;gap:22px}.manifesto,.plan-intro,.pricing-explainer,.contact-grid{grid-template-columns:1fr;gap:45px}
+  .bento{grid-template-columns:repeat(2,1fr)}.bento-card:nth-child(n){grid-column:span 1;grid-row:span 1}.bento-card:nth-child(1){grid-column:span 2;min-height:340px}
+  .plan-header{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr 1fr}.addon-grid{grid-template-columns:1fr 1fr}
+  .price-table{overflow:auto}.price-row{min-width:760px}
+}
+@media(max-width:650px){
+  body{cursor:auto}.cursor,.cursor-label{display:none}
+  .nav{height:70px;padding:15px 18px}.brand{font-size:18px}
+  section{padding:95px 18px}.hero{padding:125px 18px 30px}.hero-art{width:110vw;height:110vw;right:-53%;top:12%;opacity:.48}.hero-bottom{flex-direction:column;align-items:flex-start;margin-top:38px}.hero-meta{width:100%}.scroll-line{display:none}
+  .hero h1{font-size:20vw}.hero-copy{font-size:13px}
+  .bento{grid-template-columns:1fr}.bento-card:nth-child(1){grid-column:span 1}.bento-card h3{margin-top:35px}
+  .service{grid-template-columns:38px 1fr 30px}.service-desc{grid-column:2/-1}.service-arrow{grid-column:3;grid-row:1}.service-detail{grid-column:2/-1}.service.open .service-detail{padding-right:10px}
+  .detail-grid,.addon-grid{grid-template-columns:1fr}.detail-card{min-height:220px}.plan-hero,.plan-map{min-height:330px}
+  .price-table{margin-left:-18px;margin-right:-18px;border-left:0;border-right:0;border-radius:0}
+  .cta-section{padding:115px 18px}.cta-buttons{flex-direction:column;align-items:center}
+  .contact{padding:85px 18px 30px}.contact-foot{flex-direction:column;gap:8px}
+  .story-card{height:350px}.story-card:nth-child(2n){margin-top:0}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+
+<body>
+<div class="cursor"></div><div class="cursor-label"></div><div class="noise"></div><div class="progress"></div>
+
+<nav class="nav" id="nav">
+  <a class="brand magnetic-target" href="#top" data-cursor="Home"><span class="brand-mark"></span>veyond</a>
+  <div class="nav-links">
+    <a href="#services">Services</a><a href="#plans">Plans</a><a href="#addons">Add-ons</a><a href="#pricing">Pricing</a><a href="about.html">About</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-cta magnetic-target" href="#contact" data-cursor="Start">Start a project ↗</a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+  </div>
+</nav>
+
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-inner">
+    <div class="menu-index">VEYOND / NAVIGATION</div>
+    <div class="menu-links">
+      <a href="#services">Services</a><a href="#plans">Integrated plans</a><a href="#addons">Additional packages</a><a href="#contact">Start a project ↗</a>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="art-plane"></div><div class="art-ring"></div><div class="art-ring r2"></div><div class="art-ring r3"></div>
+    <div class="art-core"><span>V</span></div><div class="beam b1"></div><div class="beam b2"></div>
+    <i class="particle p1"></i><i class="particle p2"></i><i class="particle p3"></i><i class="particle p4"></i>
+  </div>
+  <div class="hero-inner">
+    <div class="eyebrow reveal"><i></i> Integrated business studio · India / worldwide</div>
+    <h1 class="reveal">Build a business<br>people <span class="serif">notice.</span><br><span class="accent">Remember.</span></h1>
+    <div class="hero-bottom reveal">
+      <p class="hero-copy">Veyond connects business systems, websites, design, content and growth into one coherent direction — so your business does not feel like five freelancers stitched together.</p>
+      <div class="hero-meta">
+        <div class="meta-box">05<br>sectors</div><div class="meta-box">01<br>connected system</div><div class="scroll-line">Scroll to explore ↓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee"><div class="track">
+  <span>Integrated business services <b>✦</b></span><span>Web experiences <b>✦</b></span><span>Management systems <b>✦</b></span><span>Graphic design <b>✦</b></span><span>Content & growth <b>✦</b></span>
+  <span>Integrated business services <b>✦</b></span><span>Web experiences <b>✦</b></span><span>Management systems <b>✦</b></span><span>Graphic design <b>✦</b></span><span>Content & growth <b>✦</b></span>
+</div></div>
+
+<section>
+  <div class="wrap manifesto">
+    <div class="reveal"><div class="eyebrow"><i></i> The Veyond idea</div><h2 class="manifesto-title">One direction.<br><em>Many moving parts.</em></h2></div>
+    <div class="manifesto-copy reveal">
+      <p>A business should not have to coordinate unrelated providers to create one coherent digital and operational presence. Veyond combines the pieces into a practical system.</p><br>
+      <p><strong>Good design gets attention. Good systems keep it.</strong></p>
+      <a class="link-arrow magnetic-target" data-cursor="About" href="more.html">Meet Veyond <span>↗</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-top reveal"><div class="section-label">01 / Service architecture</div><div class="section-intro">Choose the layer your business needs. <em>Then connect the rest.</em></div></div>
+    <div class="filter-bar reveal">
+      <button class="filter active" data-filter="all">All</button><button class="filter" data-filter="digital">Digital</button><button class="filter" data-filter="creative">Creative</button><button class="filter" data-filter="operations">Operations</button><button class="filter" data-filter="growth">Growth</button>
+    </div>
+    <div class="service-list reveal" id="serviceList">
+      <article class="service" data-cat="operations"><span class="service-no">01</span><span class="service-name">Smart MIS</span><span class="service-desc">Management systems that turn everyday business data into clear decisions.</span><span class="service-arrow">↗</span><div class="service-detail"><div class="tags"><span>Sales & revenue</span><span>Expenses</span><span>Inventory</span><span>Receivables</span><span>Dashboards</span><span>KPIs</span><span>Reports</span><span>Custom modules</span></div></div></article>
+      <article class="service" data-cat="digital"><span class="service-no">02</span><span class="service-name">Web Designing</span><span class="service-desc">Responsive, sector-specific websites designed around audience, brand and business goals.</span><span class="service-arrow">↗</span><div class="service-detail"><div class="tags"><span>5–8 core pages</span><span>Responsive UI</span><span>Enquiry forms</span><span>WhatsApp CTA</span><span>Maps</span><span>Basic SEO</span><span>SSL</span><span>Deployment</span></div></div></article>
+      <article class="service" data-cat="creative"><span class="service-no">03</span><span class="service-name">Graphic Designing</span><span class="service-desc">A consistent visual language across the materials customers actually see.</span><span class="service-arrow">↗</span><div class="service-detail"><div class="tags"><span>Social creatives</span><span>Posters</span><span>Menus</span><span>Brochures</span><span>Stationery</span><span>Brand assets</span></div></div></article>
+      <article class="service" data-cat="creative"><span class="service-no">04</span><span class="service-name">Video Editing</span><span class="service-desc">Short-form and promotional edits that give your brand movement, rhythm and recall.</span><span class="service-arrow">↗</span><div class="service-detail"><div class="tags"><span>Reels</span><span>Promotional edits</span><span>Property videos</span><span>Product showcases</span><span>Motion graphics</span><span>Captions</span></div></div></article>
+      <article class="service" data-cat="growth"><span class="service-no">05</span><span class="service-name">Instagram Handling</span><span class="service-desc">Setup, optimization and consistent publishing that turns a social page into a business asset.</span><span class="service-arrow">↗</span><div class="service-detail"><div class="tags"><span>Setup</span><span>Optimization</span><span>Content planning</span><span>Posts</span><span>Stories</span><span>Reels</span><span>Scheduling</span><span>Reporting</span></div></div></article>
+      <article class="service" data-cat="growth"><span class="service-no">06</span><span class="service-name">Advertisement</span><span class="service-desc">Campaign and creative support for discovery, enquiries and sales.</span><span class="service-arrow">↗</span><div class="service-detail"><div class="tags"><span>Ad creative</span><span>Campaign setup</span><span>Lead campaigns</span><span>Offer campaigns</span><span>Performance reporting</span></div></div></article>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-top reveal"><div class="section-label">02 / The system</div><div class="section-intro">Not a list of services. <em>A connected business layer.</em></div></div>
+    <div class="bento reveal">
+      <article class="bento-card" data-tilt><span class="card-index">01 — Brand presence</span><span class="number">01</span><h3>Make every touchpoint feel like it belongs to the same business.</h3><p>Website, graphics, social presence and promotional material share one visual direction instead of competing with each other.</p><div class="card-orbit"></div></article>
+      <article class="bento-card" data-tilt><span class="card-index">02 — Operations</span><span class="number">02</span><h3>Make the business easier to run.</h3><p>MIS systems organize sales, expenses, purchases, customers, inventory and reporting.</p><div class="bento-art"></div></article>
+      <article class="bento-card" data-tilt><span class="card-index">03 — Digital</span><span class="number">03</span><h3>Give people a better place to find you.</h3><p>Responsive professional websites form the public-facing layer of the system.</p></article>
+      <article class="bento-card" data-tilt><span class="card-index">04 — Sector-first</span><h3>Built around reality.</h3><div class="mini-list"><span>Cafés</span><span>Stores</span><span>Hotels</span><span>Firms</span><span>Schools</span></div></article>
+      <article class="bento-card" data-tilt><span class="card-index">05 — Scope</span><h3>Clear deliverables.</h3><p>Pages, modules, revisions, ownership, timeline and exclusions stay defined.</p></article>
+      <article class="bento-card" data-tilt><span class="card-index">06 — Expansion</span><h3>Start focused. Add intelligently.</h3><p>Advanced systems remain optional add-ons rather than hidden commitments.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="plans-section" id="plans">
+  <div class="wrap">
+    <div class="plan-intro reveal"><div><div class="eyebrow"><i></i> 03 / Integrated Veyond service plans</div><h2>One package.<br><em>Designed around your sector.</em></h2></div><p>Every integrated plan combines a customized MIS, professional website, defined graphic-design support, and launch/handover assistance. Social media remains optional.</p></div>
+
+    <div class="plan-nav reveal">
+      <button class="plan-tab active" data-plan="cafe">Café</button><button class="plan-tab" data-plan="store">Store</button><button class="plan-tab" data-plan="hotel">Hotel</button><button class="plan-tab" data-plan="firm">Firm</button><button class="plan-tab" data-plan="school">School</button>
+    </div>
+
+    <div class="plan-panel active" id="plan-cafe">
+      <div class="plan-header"><div class="plan-hero"><div class="eyebrow"><i></i> Sector plan / 01</div><h3>Café<br><span>launch system.</span></h3><div class="plan-price">₹15,000 <small>integrated package</small></div><div class="plan-caption">Brand + digital + operations</div></div>
+      <div class="plan-map"><div class="map-grid"></div><div class="node core">VEYOND<br>CORE</div><div class="node n1">MENU</div><div class="node n2">GALLERY</div><div class="node n3">OFFERS</div><div class="node n4">LOCATION</div><i class="connector c1"></i><i class="connector c2"></i><i class="connector c3"></i><i class="connector c4"></i></div></div>
+      <div class="detail-grid">
+        <div class="detail-card"><span class="d-no">01 / WEBSITE</span><h4>Public experience</h4><p>Home, About, Menu, Gallery, Offers and Location/Contact with WhatsApp CTA and enquiry/reservation link.</p></div>
+        <div class="detail-card"><span class="d-no">02 / MIS</span><h4>Business control</h4><p>Sales, expenses, purchases, customer/vendor records, receivables/payables, summaries and management dashboard.</p></div>
+        <div class="detail-card"><span class="d-no">03 / CREATIVE</span><h4>Launch kit</h4><p>Brand visual setup, social profile, cover/banner, 5 social creatives, promotional poster and offer graphic.</p></div>
+      </div>
+    </div>
+
+    <div class="plan-panel" id="plan-store">
+      <div class="plan-header"><div class="plan-hero"><div class="eyebrow"><i></i> Sector plan / 02</div><h3>Store<br><span>presence system.</span></h3><div class="plan-price">₹14,000 <small>integrated package</small></div><div class="plan-caption">Catalogue + enquiries + control</div></div>
+      <div class="plan-map"><div class="map-grid"></div><div class="node core">VEYOND<br>CORE</div><div class="node n1">CATALOGUE</div><div class="node n2">CATEGORIES</div><div class="node n3">GALLERY</div><div class="node n4">ENQUIRY</div><i class="connector c1"></i><i class="connector c2"></i><i class="connector c3"></i><i class="connector c4"></i></div></div>
+      <div class="detail-grid"><div class="detail-card"><span class="d-no">01 / WEBSITE</span><h4>Product discovery</h4><p>Home, About, Product Catalogue, Categories, Gallery and Contact with enquiry/WhatsApp CTA.</p></div><div class="detail-card"><span class="d-no">02 / MIS</span><h4>Business control</h4><p>Sales, expenses, purchases, customer/vendor records, receivables/payables, inventory where relevant and summaries.</p></div><div class="detail-card"><span class="d-no">03 / CREATIVE</span><h4>Visual launch</h4><p>Basic brand setup, social profile, cover/banner, 5 social creatives, promotional poster and offer graphic.</p></div></div>
+    </div>
+
+    <div class="plan-panel" id="plan-hotel">
+      <div class="plan-header"><div class="plan-hero"><div class="eyebrow"><i></i> Sector plan / 03</div><h3>Hotel<br><span>guest journey.</span></h3><div class="plan-price">₹19,000 <small>integrated package</small></div><div class="plan-caption">Rooms + amenities + enquiries</div></div>
+      <div class="plan-map"><div class="map-grid"></div><div class="node core">VEYOND<br>CORE</div><div class="node n1">ROOMS</div><div class="node n2">AMENITIES</div><div class="node n3">OFFERS</div><div class="node n4">CONTACT</div><i class="connector c1"></i><i class="connector c2"></i><i class="connector c3"></i><i class="connector c4"></i></div></div>
+      <div class="detail-grid"><div class="detail-card"><span class="d-no">01 / WEBSITE</span><h4>Guest experience</h4><p>Home, Rooms, Amenities, Gallery, About, Offers, Location and Contact with enquiry/WhatsApp CTA.</p></div><div class="detail-card"><span class="d-no">02 / MIS</span><h4>Operational layer</h4><p>Core business MIS with records, summaries, dashboard and relevant basic inventory.</p></div><div class="detail-card"><span class="d-no">03 / CREATIVE</span><h4>Hospitality kit</h4><p>Basic visual setup, social profile, cover/banner, 5 creatives, promotional poster and offer graphic.</p></div></div>
+    </div>
+
+    <div class="plan-panel" id="plan-firm">
+      <div class="plan-header"><div class="plan-hero"><div class="eyebrow"><i></i> Sector plan / 04</div><h3>Firm<br><span>authority system.</span></h3><div class="plan-price">₹16,000 <small>integrated package</small></div><div class="plan-caption">Expertise + trust + enquiry</div></div>
+      <div class="plan-map"><div class="map-grid"></div><div class="node core">VEYOND<br>CORE</div><div class="node n1">SERVICES</div><div class="node n2">TEAM</div><div class="node n3">EXPERTISE</div><div class="node n4">TESTIMONIALS</div><i class="connector c1"></i><i class="connector c2"></i><i class="connector c3"></i><i class="connector c4"></i></div></div>
+      <div class="detail-grid"><div class="detail-card"><span class="d-no">01 / WEBSITE</span><h4>Digital authority</h4><p>Home, About, Services, Team, Expertise/Industries, Testimonials and Contact.</p></div><div class="detail-card"><span class="d-no">02 / MIS</span><h4>Business control</h4><p>Core MIS structure with records, calculations, summaries, dashboard, KPIs and custom reporting.</p></div><div class="detail-card"><span class="d-no">03 / CREATIVE</span><h4>Brand support</h4><p>Basic brand visual setup, social profile, cover/banner, 5 social creatives, poster and offer graphic.</p></div></div>
+    </div>
+
+    <div class="plan-panel" id="plan-school">
+      <div class="plan-header"><div class="plan-hero"><div class="eyebrow"><i></i> Sector plan / 05</div><h3>School<br><span>campus system.</span></h3><div class="plan-price">₹17,000 <small>integrated package</small></div><div class="plan-caption">Academics + facilities + admissions</div></div>
+      <div class="plan-map"><div class="map-grid"></div><div class="node core">VEYOND<br>CORE</div><div class="node n1">ACADEMICS</div><div class="node n2">FACILITIES</div><div class="node n3">ACHIEVEMENTS</div><div class="node n4">ADMISSIONS</div><i class="connector c1"></i><i class="connector c2"></i><i class="connector c3"></i><i class="connector c4"></i></div></div>
+      <div class="detail-grid"><div class="detail-card"><span class="d-no">01 / WEBSITE</span><h4>Campus experience</h4><p>Home, About, Academics, Facilities, Faculty, Achievements, Gallery, Admissions and Contact.</p></div><div class="detail-card"><span class="d-no">02 / MIS</span><h4>Operational layer</h4><p>Customized MIS suited to the institution with records, summaries, dashboards and basic instructions.</p></div><div class="detail-card"><span class="d-no">03 / CREATIVE</span><h4>Institutional kit</h4><p>Basic visual setup, social profile, cover/banner, 5 social creatives, promotional poster and offer graphic.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="addons-section" id="addons">
+  <div class="wrap">
+    <div class="addons-head reveal"><div><div class="eyebrow"><i></i> 04 / Veyond additional service package plan</div><h2>Build the<br><em>extra layer.</em></h2></div><p>Advanced functionality is modular. Add only what the business actually needs — from booking and e-commerce to Power BI and brand identity.</p></div>
+    <div class="addon-grid reveal">
+      <article class="addon-card"><span class="type">Website</span><h3>Advanced landing page</h3><span class="cost">₹2,500</span></article>
+      <article class="addon-card"><span class="type">Website</span><h3>Online ordering</h3><span class="cost">₹5k–₹10k</span></article>
+      <article class="addon-card"><span class="type">Website</span><h3>Table reservation</h3><span class="cost">₹4k–₹7k</span></article>
+      <article class="addon-card"><span class="type">Website</span><h3>E-commerce functionality</h3><span class="cost">₹10k–₹25k+</span></article>
+      <article class="addon-card"><span class="type">Website</span><h3>Hotel booking system</h3><span class="cost">₹7.5k–₹15k</span></article>
+      <article class="addon-card"><span class="type">Website</span><h3>Payment gateway</h3><span class="cost">₹3k–₹5k</span></article>
+      <article class="addon-card"><span class="type">Creative</span><h3>Logo design</h3><span class="cost">₹2k–₹5k</span></article>
+      <article class="addon-card"><span class="type">Creative</span><h3>Mini brand identity</h3><span class="cost">₹5k–₹10k</span></article>
+      <article class="addon-card"><span class="type">MIS</span><h3>Advanced dashboard</h3><span class="cost">₹2.5k–₹5k</span></article>
+      <article class="addon-card"><span class="type">MIS</span><h3>Power BI dashboard</h3><span class="cost">₹5k–₹15k+</span></article>
+      <article class="addon-card"><span class="type">MIS</span><h3>Advanced Excel automation</h3><span class="cost">₹3k–₹10k+</span></article>
+      <article class="addon-card"><span class="type">Growth</span><h3>Paid advertising management</h3><span class="cost">₹2k–₹5k/mo + spend</span></article>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-top reveal"><div class="section-label">05 / How the system grows</div><div class="section-intro">Start with the foundation. <em>Expand when the business earns the complexity.</em></div></div>
+    <div class="horizontal-wrap" id="storyScroller"><div class="horizontal-track">
+      <article class="story-card"><span class="story-num">01 — FOUNDATION</span><h3>Get visible.</h3><p>Professional website + visual consistency + business information structured for the right audience.</p><div class="stroke"></div></article>
+      <article class="story-card"><span class="story-num">02 — CONTROL</span><h3>Get organised.</h3><p>MIS turns operational data into records, summaries, dashboards and clearer decisions.</p><div class="stroke"></div></article>
+      <article class="story-card"><span class="story-num">03 — CONVERT</span><h3>Get useful.</h3><p>Add ordering, reservations, booking, enquiries, catalogues or payment integrations only when they matter.</p><div class="stroke"></div></article>
+      <article class="story-card"><span class="story-num">04 — GROW</span><h3>Get louder.</h3><p>Social media and advertising remain optional layers for businesses ready to invest in acquisition.</p><div class="stroke"></div></article>
+    </div></div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="pricing-explainer">
+      <div class="reveal"><div class="eyebrow"><i></i> 06 / Pricing, simply</div><h2>Pay for the<br><em>system you need.</em></h2></div>
+      <div class="reveal"><p class="pricing-copy">Veyond pricing is split into two layers: an industry-specific integrated package and optional additional service packages. The integrated package covers the defined foundation; advanced functionality is scoped separately.</p>
+        <div class="price-rules">
+          <div class="rule"><b>01</b><p><strong>Integrated = foundation.</strong> MIS + professional website + defined graphic design + launch/handover.</p></div>
+          <div class="rule"><b>02</b><p><strong>Add-ons = expansion.</strong> Booking, ordering, e-commerce, advanced dashboards, branding and other advanced work are optional.</p></div>
+          <div class="rule"><b>03</b><p><strong>Social = optional.</strong> Setup and monthly management are not mandatory inside the integrated package.</p></div>
+          <div class="rule"><b>04</b><p><strong>Scope stays finite.</strong> Pages, modules, revision rounds, deliverables, timeline, ownership and exclusions should be specified.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="price-table reveal">
+      <div class="price-row head"><div>Industry</div><div>Café</div><div>Store</div><div>Hotel</div><div>Firm</div><div>School</div></div>
+      <div class="price-row"><div class="sector">Integrated plan</div><div>₹15k</div><div>₹14k</div><div>₹19k</div><div>₹16k</div><div>₹17k</div></div>
+    </div>
+    <p class="pricing-note">Social media is optional. Paid advertising budget is separate from Veyond's service fee. Advanced transactional systems and custom applications are scope-based add-ons.</p>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-kicker reveal">For businesses that want the whole picture</div>
+  <h2 class="cta-title reveal">Make it <em>coherent.</em><br>Make it <span>matter.</span></h2>
+  <div class="cta-buttons reveal"><a class="magnetic primary" href="#contact">Start a project ↗</a><a class="magnetic" href="#plans">Explore plans ↓</a></div>
+</section>
+</main>
+
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="reveal"><div class="section-label">07 / Start a project</div><h2>Bring us<br>the <em>problem.</em></h2><p class="contact-side">Tell us what your business needs. Choose an integrated plan, a service, or an additional package — and we'll shape the scope from there.</p><div class="contact-tags"><span>Integrated plans</span><span>Web</span><span>MIS</span><span>Design</span><span>Video</span><span>Social</span><span>Ads</span><span>Add-ons</span></div></div>
+      <form class="form reveal" id="projectForm">
+        <input type="hidden" id="destinationEmail" value="veyondtheideas@gmail.com">
+        <div class="field"><label>Your name</label><input id="name" required placeholder="Your name"></div>
+        <div class="field"><label>Work email</label><input id="email" type="email" required placeholder="you@company.com"></div>
+        <div class="field"><label>Firm name</label><input id="firmName" required placeholder="Business / firm name"></div>
+        <div class="field"><label>What are you interested in?</label><select id="service"><option>Veyond Integrated Service Plan</option><option>Veyond Additional Service Package Plan</option><option>Smart MIS</option><option>Web Designing</option><option>Graphic Designing</option><option>Video Editing</option><option>Instagram Handling</option><option>Advertisement</option></select></div>
+        <div class="field"><label>Business sector</label><select id="sector"><option>Café / Restaurant</option><option>Store</option><option>Hotel / Homestay</option><option>Firm</option><option>School / Institute</option><option>Other</option></select></div>
+        <div class="field"><label>Tell us about it</label><textarea id="message" required placeholder="The ambition, problem, deadline, plan or add-on you have in mind..."></textarea></div>
+        <button class="submit magnetic-target" type="submit" data-cursor="Send">Send project enquiry ↗</button>
+      </form>
+    </div>
+    <div class="contact-foot"><span>Veyond © 2026</span><span>Built with intent / not templates</span><span>India · Worldwide</span></div>
+  </div>
+</section>
+<div class="toast" id="toast">Opening your email app…</div>
+
+<script>
+const $ = (s, p=document) => p.querySelector(s);
+const $$ = (s, p=document) => [...p.querySelectorAll(s)];
+
+const cursor = $('.cursor'), cursorLabel = $('.cursor-label');
+let mx=0,my=0,cx=0,cy=0;
+window.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+(function cursorLoop(){
+  cx += (mx-cx)*.18; cy += (my-cy)*.18;
+  cursor.style.left=cx+'px'; cursor.style.top=cy+'px';
+  cursorLabel.style.left=cx+'px'; cursorLabel.style.top=cy+'px';
+  requestAnimationFrame(cursorLoop);
+})();
+$$('[data-cursor]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.classList.add('big');cursorLabel.textContent=el.dataset.cursor;cursorLabel.classList.add('show')});
+  el.addEventListener('mouseleave',()=>{cursor.classList.remove('big');cursorLabel.classList.remove('show')});
+});
+
+const nav=$('#nav'), progress=$('.progress');
+function scrollUI(){
+  const d=document.documentElement;
+  progress.style.width=((d.scrollTop/(d.scrollHeight-d.clientHeight))*100)+'%';
+  nav.classList.toggle('scrolled', d.scrollTop>30);
+}
+window.addEventListener('scroll',scrollUI,{passive:true}); scrollUI();
+
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.12});
+$$('.reveal').forEach(el=>observer.observe(el));
+
+/* Service accordions */
+$$('.service').forEach(card=>{
+  card.addEventListener('click',()=>{
+    $$('.service').forEach(x=>{if(x!==card)x.classList.remove('open')});
+    card.classList.toggle('open');
+  });
+});
+
+/* Service filters */
+$$('.filter').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    $$('.filter').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
+    const filter=btn.dataset.filter;
+    $$('.service').forEach(card=>card.classList.toggle('hidden',filter!=='all' && card.dataset.cat!==filter));
+  });
+});
+
+/* Integrated plan tabs */
+$$('.plan-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    $$('.plan-tab').forEach(x=>x.classList.remove('active')); tab.classList.add('active');
+    $$('.plan-panel').forEach(x=>x.classList.remove('active'));
+    $('#plan-'+tab.dataset.plan).classList.add('active');
+  });
+});
+
+/* Magnetic interactions */
+$$('.magnetic').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect(), x=e.clientX-(r.left+r.width/2), y=e.clientY-(r.top+r.height/2);
+    el.style.transform=`translate(${x*.16}px,${y*.16}px)`;
+  });
+  el.addEventListener('mouseleave',()=>el.style.transform='');
+});
+
+/* Subtle 3D cards */
+$$('[data-tilt]').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`perspective(900px) rotateX(${-y*2.8}deg) rotateY(${x*3.2}deg) translateY(-5px)`;
+  });
+  card.addEventListener('mouseleave',()=>card.style.transform='');
+});
+
+/* Horizontal storytelling responds to wheel while pointer is over it */
+const story=$('#storyScroller'), track=$('.horizontal-track');
+let storyX=0;
+story.addEventListener('wheel',e=>{
+  if(window.innerWidth>900){
+    const max=Math.max(0,track.scrollWidth-story.clientWidth);
+    const next=Math.max(0,Math.min(max,storyX+e.deltaY*.55));
+    if(next!==storyX){e.preventDefault();storyX=next;track.style.transform=`translateX(${-storyX}px)`;}
+  }
+},{passive:false});
+
+/* Fluid mobile menu */
+const menu=$('#menuOverlay'), toggle=$('#menuToggle');
+toggle.addEventListener('click',()=>{menu.classList.toggle('open');document.body.classList.toggle('menu-open')});
+$$('.menu-links a').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('open');document.body.classList.remove('menu-open')}));
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){menu.classList.remove('open');document.body.classList.remove('menu-open')}});
+
+/* Form -> email client */
+$('#projectForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=$('#name').value.trim(), email=$('#email').value.trim(), firm=$('#firmName').value.trim();
+  const service=$('#service').value, sector=$('#sector').value, message=$('#message').value.trim(), dest=$('#destinationEmail').value.trim();
+  const subject=encodeURIComponent(`New Veyond project enquiry — ${service}`);
+  const body=encodeURIComponent(`Name: ${name}\nEmail: ${email}\nFirm: ${firm}\nSector: ${sector}\nService: ${service}\n\nProject:\n${message}`);
+  window.location.href=`mailto:${dest}?subject=${subject}&body=${body}`;
+  $('#toast').classList.add('show'); setTimeout(()=>$('#toast').classList.remove('show'),3500);
+});
+
+/* Text morphing feel: rotate the hero adjective without shifting layout */
+const morph=['notice.','value.','choose.','trust.'];
+const morphEl=$('.hero h1 .serif'); let mi=0;
+setInterval(()=>{
+  mi=(mi+1)%morph.length;
+  morphEl.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-12px)'}],{duration:260,fill:'forwards'}).finished.then(()=>{
+    morphEl.textContent=morph[mi];
+    morphEl.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:420,fill:'forwards'});
+  });
+},3200);
+</script>
+</body>
+</html>

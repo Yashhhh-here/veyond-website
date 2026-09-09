@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Veyond — the people, thinking and work behind the studio.">
+<title>Veyond — About</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05040a;--surface:#0b0913;--surface2:#111020;--paper:#f1eee8;
+  --text:#f6f4fa;--muted:#9b97aa;--faint:#6e6a7c;
+  --line:rgba(208,199,240,.14);--line2:rgba(208,199,240,.25);
+  --accent:#9b88ff;--accent2:#d1c9ff;--accent3:#5544c8;--green:#c8ff66;
+  --max:1440px;--ease:cubic-bezier(.2,.8,.2,1);--radius:24px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{background:var(--bg);color:var(--text);font-family:Manrope,Arial,sans-serif;overflow-x:hidden;cursor:none}
+a,button{color:inherit;text-decoration:none;cursor:none}
+button,input{font:inherit}
+::selection{background:var(--accent);color:#05040a}
+::-webkit-scrollbar{width:7px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#29233e;border-radius:10px}
+
+.noise{position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
+.progress{position:fixed;z-index:1900;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--accent3),var(--accent2),var(--green));box-shadow:0 0 16px rgba(155,136,255,.5)}
+.cursor{position:fixed;z-index:2500;width:9px;height:9px;border-radius:50%;left:0;top:0;pointer-events:none;background:var(--accent2);mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .22s,height .22s,opacity .2s}
+.cursor.big{width:62px;height:62px}
+.cursor-label{position:fixed;z-index:2501;pointer-events:none;opacity:0;font:9px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em;transform:translate(-50%,-50%);transition:opacity .2s}
+.cursor-label.show{opacity:1}
+
+.nav{position:fixed;z-index:1500;top:0;left:0;width:100%;height:82px;padding:20px 34px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;transition:.45s}
+.nav.scrolled{background:rgba(5,4,10,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;letter-spacing:-.04em}
+.brand-mark{width:18px;height:18px;border:1px solid var(--accent2);display:inline-block;transform:rotate(45deg);position:relative}
+.brand-mark:after{content:"";position:absolute;inset:4px;border:1px solid var(--accent);opacity:.7}
+.nav-links{display:flex;gap:30px;font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.nav-links a{transition:color .25s}.nav-links a:hover{color:var(--text)}
+.nav-right{justify-self:end;display:flex;align-items:center;gap:16px}
+.nav-cta{border:1px solid var(--line2);padding:12px 16px;border-radius:100px;font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;background:rgba(255,255,255,.025);transition:.3s}
+.nav-cta:hover{background:var(--text);color:#05040a;transform:translateY(-2px)}
+.menu-toggle{display:none;background:none;border:0;color:var(--text);font-size:24px}
+
+.wrap{width:min(calc(100% - 68px),var(--max));margin:auto}
+.eyebrow,.label{font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.13em;color:var(--muted)}
+.eyebrow{display:flex;align-items:center;gap:10px}.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.reveal.show{opacity:1;transform:none}
+
+.hero{min-height:100vh;position:relative;display:flex;align-items:flex-end;padding:145px 0 90px;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:90px 90px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.65),transparent 92%);opacity:.42}
+.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;right:-180px;top:4%;background:radial-gradient(circle,rgba(155,136,255,.18),transparent 65%);filter:blur(8px);animation:drift 10s ease-in-out infinite}
+.hero-ring{position:absolute;width:620px;height:620px;right:-55px;top:12%;border:1px solid rgba(209,201,255,.16);border-radius:50%;transform:rotate(-20deg) skewX(-8deg);animation:spin 28s linear infinite}
+.hero-ring:before,.hero-ring:after{content:"";position:absolute;inset:55px;border:1px solid rgba(155,136,255,.13);border-radius:50%}
+.hero-ring:after{inset:145px;border-color:rgba(200,255,102,.12)}
+.hero-inner{position:relative;z-index:2;width:min(calc(100% - 68px),var(--max));margin:auto}
+.hero h1{font-size:clamp(64px,10vw,154px);line-height:.86;letter-spacing:-.075em;font-weight:800;max-width:1100px;margin-top:30px}
+.serif{font-family:"Playfair Display",serif;font-weight:500;font-style:italic;color:var(--accent2)}
+.hero-sub{margin-top:54px;display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:end}
+.hero-copy{font-size:clamp(18px,2vw,27px);line-height:1.4;letter-spacing:-.03em;max-width:680px;color:#ded9e8}
+.hero-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.meta{background:rgba(8,7,14,.78);padding:18px}.meta b{display:block;font:28px "DM Mono",monospace;color:var(--accent2);margin-bottom:7px}.meta span{font-size:11px;color:var(--muted)}
+
+.marquee{overflow:hidden;border-bottom:1px solid var(--line);white-space:nowrap}
+.marquee-track{display:inline-flex;gap:48px;padding:18px 0;animation:marquee 25s linear infinite;font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.marquee b{color:var(--green);font-size:14px}
+
+section{padding:150px 0;border-bottom:1px solid var(--line)}
+.section-head{display:grid;grid-template-columns:.55fr 1.45fr;gap:40px;margin-bottom:80px}
+.section-title{font-size:clamp(42px,6vw,86px);line-height:.95;letter-spacing:-.065em;font-weight:800}
+.section-title em{font-family:"Playfair Display",serif;font-weight:500;color:var(--accent2)}
+.section-intro{font-size:19px;line-height:1.65;color:var(--muted);max-width:700px}
+
+.manifesto{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start}
+.statement{font-size:clamp(32px,4.6vw,67px);line-height:1.02;letter-spacing:-.055em}
+.statement span{color:var(--faint)}
+.body-copy{font-size:16px;line-height:1.9;color:var(--muted);max-width:580px}
+.body-copy p+p{margin-top:24px}
+.pull{margin-top:50px;border-left:1px solid var(--accent);padding-left:20px;color:var(--text);font-size:14px;line-height:1.6}
+
+.work-grid{display:grid;grid-template-columns:1.15fr .85fr;grid-template-rows:360px 280px;gap:16px}
+.work-slot{position:relative;overflow:hidden;border:1px solid var(--line);background:
+ radial-gradient(circle at 20% 20%,rgba(155,136,255,.18),transparent 30%),
+ linear-gradient(135deg,#0d0b16,#07060d);transition:transform .5s var(--ease),border-color .5s}
+.work-slot:nth-child(2){background:radial-gradient(circle at 70% 25%,rgba(200,255,102,.11),transparent 27%),linear-gradient(135deg,#0d0b16,#07060d)}
+.work-slot:nth-child(3){background:radial-gradient(circle at 75% 75%,rgba(155,136,255,.14),transparent 32%),linear-gradient(135deg,#090812,#111020)}
+.work-slot:nth-child(4){background:radial-gradient(circle at 20% 70%,rgba(209,201,255,.10),transparent 28%),linear-gradient(135deg,#111020,#07060d)}
+.work-slot:hover{transform:translateY(-7px);border-color:var(--line2)}
+.work-slot:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;opacity:.45}
+.work-slot.large{grid-row:span 2}
+.slot-inner{position:absolute;inset:0;padding:24px;display:flex;flex-direction:column;justify-content:space-between}
+.slot-top{display:flex;justify-content:space-between;align-items:center;font:9px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.slot-icon{width:54px;height:54px;border:1px solid var(--line2);display:grid;place-items:center;border-radius:50%;font-family:"Playfair Display",serif;font-size:20px;color:var(--accent2);background:rgba(5,4,10,.3);backdrop-filter:blur(10px)}
+.slot-title{font-size:clamp(22px,3vw,42px);letter-spacing:-.05em;font-weight:700}
+.slot-note{font:9px "DM Mono",monospace;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-top:7px}
+.slot-cross{position:absolute;width:180px;height:180px;right:12%;top:25%;border:1px solid rgba(209,201,255,.12);transform:rotate(45deg);border-radius:24px;animation:float 7s ease-in-out infinite}
+.slot-cross:after{content:"";position:absolute;inset:28px;border:1px solid rgba(200,255,102,.1);border-radius:16px}
+
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.person{position:relative;min-height:620px;border:1px solid var(--line);background:var(--surface);overflow:hidden;transition:.5s var(--ease)}
+.person:hover{transform:translateY(-8px);border-color:var(--line2)}
+.person-photo{height:390px;margin:12px;background:#08070e;position:relative;overflow:hidden;border:1px solid var(--line)}
+.person-photo:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:38px 38px}
+.person-photo:after{content:"";position:absolute;width:260px;height:260px;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid rgba(209,201,255,.18);border-radius:50%;box-shadow:0 0 100px rgba(155,136,255,.08)}
+.photo-label{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.photo-label strong{font-size:12px;text-transform:uppercase;letter-spacing:.14em}
+.photo-label span{font:9px "DM Mono",monospace;color:var(--muted);margin-top:9px;text-transform:uppercase;letter-spacing:.1em}
+.person-info{padding:24px 28px 32px}
+.role{font:9px "DM Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+.person h3{font-size:clamp(32px,4vw,52px);letter-spacing:-.06em;margin:12px 0 20px}
+.person p{color:var(--muted);line-height:1.75;font-size:15px;max-width:560px}
+.person-index{position:absolute;right:25px;bottom:25px;font:9px "DM Mono",monospace;color:var(--faint)}
+
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.principle{background:var(--surface);padding:38px;min-height:270px;position:relative}
+.principle:nth-child(2){background:#0e0c18}.principle:nth-child(3){background:#0a0911}
+.principle-no{font:10px "DM Mono",monospace;color:var(--accent2)}
+.principle h3{font-size:25px;letter-spacing:-.04em;margin:65px 0 14px}
+.principle p{font-size:13px;line-height:1.75;color:var(--muted)}
+
+.closing{min-height:70vh;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden}
+.closing-orb{position:absolute;width:550px;height:550px;border-radius:50%;background:radial-gradient(circle,rgba(155,136,255,.14),transparent 65%);filter:blur(4px)}
+.closing h2{position:relative;font-size:clamp(55px,10vw,150px);line-height:.88;letter-spacing:-.075em;max-width:1100px}
+.closing h2 em{font-family:"Playfair Display",serif;font-weight:500;color:var(--accent2)}
+.closing p{position:relative;margin:35px auto 0;color:var(--muted);max-width:520px;line-height:1.7}
+.cta{position:relative;display:inline-flex;margin-top:34px;padding:15px 22px;border:1px solid var(--line2);border-radius:100px;font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em;transition:.3s}
+.cta:hover{background:var(--text);color:#05040a;transform:translateY(-3px)}
+
+footer{padding:28px 0;color:var(--faint);font:9px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em}
+.footer-row{display:flex;justify-content:space-between;gap:20px}
+
+.menu-overlay{position:fixed;inset:0;background:rgba(5,4,10,.97);z-index:1400;display:grid;align-items:end;padding:100px 34px 55px;opacity:0;pointer-events:none;transform:translateY(-20px);transition:.5s}
+.menu-overlay.open{opacity:1;pointer-events:auto;transform:none}
+.menu-links{display:grid;gap:14px}.menu-links a{font-size:clamp(40px,9vw,100px);font-weight:800;letter-spacing:-.07em}.menu-index{font:10px "DM Mono",monospace;color:var(--muted);margin-bottom:35px}
+
+@keyframes spin{to{transform:rotate(340deg) skewX(-8deg)}}@keyframes drift{50%{transform:translate(-35px,30px) scale(1.05)}}@keyframes float{50%{transform:rotate(45deg) translate(10px,-16px)}}@keyframes marquee{to{transform:translateX(-50%)}} 
+@media(max-width:900px){
+  body{cursor:auto}.cursor,.cursor-label{display:none}
+  .nav{padding:18px 20px}.nav-links,.nav-cta{display:none}.menu-toggle{display:block}
+  .wrap,.hero-inner{width:min(calc(100% - 40px),var(--max))}
+  .hero{padding-top:125px;min-height:90vh}.hero h1{font-size:clamp(58px,15vw,100px)}
+  .hero-sub,.manifesto,.section-head{grid-template-columns:1fr;gap:40px}
+  .hero-ring{right:-270px;top:18%;width:500px;height:500px}
+  section{padding:100px 0}.section-head{margin-bottom:55px}
+  .work-grid{grid-template-columns:1fr;grid-template-rows:320px 260px 260px 260px}.work-slot.large{grid-row:auto}
+  .team-grid{grid-template-columns:1fr}.person{min-height:560px}.person-photo{height:330px}
+  .principles{grid-template-columns:1fr}
+  .closing{min-height:65vh}
+  .footer-row{flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="noise"></div><div class="progress"></div>
+<div class="cursor"></div><div class="cursor-label"></div>
+
+<nav class="nav" id="nav">
+  <a class="brand magnetic" href="index.html" data-cursor="Home"><span class="brand-mark"></span>veyond</a>
+  <div class="nav-links">
+    <a href="index.html#services">Services</a>
+    <a href="index.html#plans">Plans</a>
+    <a href="index.html#addons">Add-ons</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="about.html">About</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-cta magnetic" href="index.html#contact" data-cursor="Start">Start a project ↗</a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+  </div>
+</nav>
+
+<div class="menu-overlay" id="menuOverlay">
+  <div>
+    <div class="menu-index">VEYOND / NAVIGATION</div>
+    <div class="menu-links">
+      <a href="index.html">Home</a>
+      <a href="#story">The idea</a>
+      <a href="#work">Our work</a>
+      <a href="#people">The people</a>
+      <a href="index.html#contact">Start a project ↗</a>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-grid"></div><div class="hero-glow"></div><div class="hero-ring"></div>
+  <div class="hero-inner">
+    <div class="eyebrow reveal"><i></i> Veyond / About the studio</div>
+    <h1 class="reveal">A small studio<br>with a <span class="serif">wide lens.</span></h1>
+    <div class="hero-sub reveal">
+      <p class="hero-copy">Veyond brings business thinking, digital experiences and creative work into one connected direction.</p>
+      <div class="hero-meta">
+        <div class="meta"><b>01</b><span>connected studio</span></div>
+        <div class="meta"><b>VEYOND TEAM </b><span>people behind Veyond</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee"><div class="marquee-track">
+  <span>Business thinking <b>✦</b></span><span>Creative direction <b>✦</b></span><span>Digital experiences <b>✦</b></span><span>Systems <b>✦</b></span><span>Detail <b>✦</b></span>
+  <span>Business thinking <b>✦</b></span><span>Creative direction <b>✦</b></span><span>Digital experiences <b>✦</b></span><span>Systems <b>✦</b></span><span>Detail <b>✦</b></span>
+</div></div>
+
+<section id="story">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="label">01 / The idea</div>
+      <div>
+        <h2 class="section-title">Veyond is built around <em>connection.</em></h2>
+        <p class="section-intro" style="margin-top:28px">A website should make sense with the brand. The brand should make sense with the business. The content, systems and presentation should feel like parts of the same thought.</p>
+      </div>
+    </div>
+    <div class="manifesto">
+      <div class="statement reveal">Not just <span>making things.</span><br>Making the pieces <em>belong together.</em></div>
+      <div class="body-copy reveal">
+        <p>Veyond is an integrated service studio created to work across the parts of a business that customers actually experience — from digital interfaces and visual identity to content, presentation and practical business systems.</p>
+        <p>We care about the space between disciplines: the details where strategy becomes design, design becomes experience, and experience becomes something people remember.</p>
+        <div class="pull">“The goal is not to make everything louder. It is to make everything make sense.”</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="label">02 / Selected work</div>
+      <div>
+        <h2 class="section-title">Leave room for the <em>work.</em></h2>
+        <p class="section-intro" style="margin-top:28px">These spaces are deliberately designed as a visual archive. Replace each placeholder with a real project image, case study cover, campaign still or behind-the-scenes photograph as the portfolio grows.</p>
+      </div>
+    </div>
+
+    <div class="work-grid">
+      <article class="work-slot large reveal" data-tilt data-cursor="View work">
+        <div class="slot-cross"></div>
+        <div class="slot-inner">
+          <div class="slot-top"><span>WORK / 001</span><span>IMAGE PLACEHOLDER</span></div>
+          <div><div class="slot-icon">V</div><div class="slot-title">Featured project</div><div class="slot-note">Replace with strongest case study / hero image</div></div>
+        </div>
+      </article>
+      <article class="work-slot reveal" data-tilt data-cursor="View work">
+        <div class="slot-inner">
+          <div class="slot-top"><span>WORK / 002</span><span>IMAGE PLACEHOLDER</span></div>
+          <div><div class="slot-icon">02</div><div class="slot-title">Brand / Identity</div><div class="slot-note">Logo · campaign · visual system</div></div>
+        </div>
+      </article>
+      <article class="work-slot reveal" data-tilt data-cursor="View work">
+        <div class="slot-inner">
+          <div class="slot-top"><span>WORK / 003</span><span>IMAGE PLACEHOLDER</span></div>
+          <div><div class="slot-icon">03</div><div class="slot-title">Digital experience</div><div class="slot-note">Website · interface · interaction</div></div>
+        </div>
+      </article>
+      <article class="work-slot reveal" data-tilt data-cursor="View work">
+        <div class="slot-inner">
+          <div class="slot-top"><span>WORK / 004</span><span>IMAGE PLACEHOLDER</span></div>
+          <div><div class="slot-icon">04</div><div class="slot-title">Content / Campaign</div><div class="slot-note">Photography · social · motion</div></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="people">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="label">03 / The people</div>
+      <div>
+        <h2 class="section-title">Two different interests.<br>One <em>direction.</em></h2>
+        <p class="section-intro" style="margin-top:28px">Veyond is shaped by two perspectives that naturally meet in the middle — structured business thinking and curiosity for creative technology.</p>
+      </div>
+    </div>
+
+    <div class="team-grid">
+      <article class="person reveal" data-tilt>
+        <div class="person-photo">
+          <div class="photo-label"><strong>Portrait placeholder</strong><span>Founder photograph goes here</span></div>
+        </div>
+        <div class="person-info">
+          <div class="role">Founder</div>
+          <h3>Abhinav Rawat</h3>
+          <p>Abhinav was a bright student from start with a strong interest in finance and accounting, particularly the world of Chartered Accountancy. His interest in the numbers and structure behind a business brings a practical, analytical perspective to Veyond and its way of thinking.</p>
+        </div>
+        <div class="person-index">01 / 02</div>
+      </article>
+
+      <article class="person reveal" data-tilt>
+        <div class="person-photo">
+          <div class="photo-label"><strong>Portrait placeholder</strong><span>Co-founder photograph goes here</span></div>
+        </div>
+        <div class="person-info">
+          <div class="role">Co-founder</div>
+          <h3>Ansh Dwivedi</h3>
+          <p>Ansh is drawn to creative and technology-driven work, with a natural curiosity for how ideas can be turned into experiences, interfaces and useful digital things. He also keeps an interest in finance, bringing a balance between creative exploration and business thinking.</p>
+        </div>
+        <div class="person-index">02 / 02</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="label">04 / How we think</div>
+      <div>
+        <h2 class="section-title">A few things we want every <em>piece</em> to carry.</h2>
+      </div>
+    </div>
+    <div class="principles">
+      <article class="principle reveal"><div class="principle-no">01</div><h3>Clarity</h3><p>Beautiful work is stronger when the purpose underneath it is clear. We aim for visual decisions that communicate rather than decorate.</p></article>
+      <article class="principle reveal"><div class="principle-no">02</div><h3>Curiosity</h3><p>We like learning across disciplines — business, design, technology and the details that connect them.</p></article>
+      <article class="principle reveal"><div class="principle-no">03</div><h3>Craft</h3><p>Spacing, type, hierarchy, interaction and the tiny details matter. The final few percent should feel intentional.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="closing-orb"></div>
+  <div class="wrap reveal">
+    <div class="eyebrow" style="justify-content:center"><i></i> Veyond / Let's build</div>
+    <h2 style="margin-top:28px">Good work starts with a <em>good question.</em></h2>
+    <p>Tell us what you are building, what is not working, or what you want to make better. We can start from there.</p>
+    <a class="cta magnetic" href="index.html#contact" data-cursor="Start">Start a project ↗</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap footer-row"><span>© 2026 Veyond</span><span>Integrated by design.</span><a href="#top">Back to top ↑</a></div>
+</footer>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const cursor=$('.cursor'),label=$('.cursor-label');
+let mx=0,my=0,cx=0,cy=0;
+window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+(function loop(){cx+=(mx-cx)*.18;cy+=(my-cy)*.18;cursor.style.left=cx+'px';cursor.style.top=cy+'px';label.style.left=cx+'px';label.style.top=cy+'px';requestAnimationFrame(loop)})();
+$$('[data-cursor]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.classList.add('big');label.textContent=el.dataset.cursor;label.classList.add('show')});
+  el.addEventListener('mouseleave',()=>{cursor.classList.remove('big');label.classList.remove('show')});
+});
+$$('.magnetic').forEach(el=>{
+  el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);el.style.transform=`translate(${x*.14}px,${y*.14}px)`});
+  el.addEventListener('mouseleave',()=>el.style.transform='');
+});
+$$('[data-tilt]').forEach(el=>{
+  el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.transform=`perspective(1000px) rotateX(${-y*2}deg) rotateY(${x*2.4}deg) translateY(-7px)`});
+  el.addEventListener('mouseleave',()=>el.style.transform='');
+});
+const nav=$('#nav'),progress=$('.progress');
+function scrollUI(){const d=document.documentElement;progress.style.width=((d.scrollTop/(d.scrollHeight-d.clientHeight))*100)+'%';nav.classList.toggle('scrolled',d.scrollTop>30)}
+window.addEventListener('scroll',scrollUI,{passive:true});scrollUI();
+const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.1});
+$$('.reveal').forEach(el=>observer.observe(el));
+const menu=$('#menuOverlay'),toggle=$('#menuToggle');
+toggle.addEventListener('click',()=>{menu.classList.toggle('open');document.body.classList.toggle('menu-open')});
+$$('.menu-links a').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('open');document.body.classList.remove('menu-open')}));
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){menu.classList.remove('open');document.body.classList.remove('menu-open')}});
+</script>
+</body>
+</html>
